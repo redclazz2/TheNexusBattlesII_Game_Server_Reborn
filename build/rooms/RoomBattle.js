@@ -6,25 +6,30 @@ const RoomBattleState_1 = require("./schema/RoomBattleState");
 class room_battle extends core_1.Room {
     constructor() {
         super(...arguments);
-        this.maxClients = 1;
+        this.currentMatchReadyNotices = 0;
+        this.handleTurnTermination = () => {
+        };
     }
     onCreate(options) {
         this.setState(new RoomBattleState_1.RoomBattleState());
         this.setMetadata({
             ganacia: options.numero_creditos,
-            nombre: options.nombre_sala
+            nombre: options.nombre_sala,
+            equipos: options.equipos,
+            maximo: options.numero_jugadores
         });
-        this.maxClients = options.numero_jugadores;
-        this.state.expectedUsers = this.maxClients.toString();
         this.state.clients;
-        //Lista -> idSession -> idSession
-        //LocalTurn = 0 - 1 0 - 2  0 - 3
-        this.onMessage("CardSync", (client, message) => {
-            this.broadcast("CardSync", message, { except: client });
+        //Card Initial Sync
+        this.onMessage(0, (client, message) => {
+            this.broadcast(0, message, { except: client });
         });
-        this.onMessage("ataque", (client, message) => {
+        //Skip Turn
+        this.onMessage(1, () => {
+            this.handleTurnTermination();
         });
-        this.onMessage("asdnad", (client, message) => {
+        //A client is ready to begin
+        this.onMessage(2, () => {
+            this.currentMatchReadyNotices++;
         });
     }
     onJoin(client, options) {
@@ -33,13 +38,10 @@ class room_battle extends core_1.Room {
         _player.sessionID = client.sessionId;
         _player.username = "Player";
         this.state.clients.set(_player.sessionID, _player);
-        this.state.turnos.push(_player.sessionID);
     }
     onLeave(client, consented) {
         console.log(client.sessionId, "left!");
         this.state.clients.delete(client.sessionId);
-        const _i = this.state.turnos.indexOf(client.sessionId);
-        this.state.turnos.deleteAt(_i);
     }
     onDispose() {
         console.log("room", this.roomId, "disposing...");

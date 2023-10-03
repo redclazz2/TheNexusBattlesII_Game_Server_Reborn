@@ -20,22 +20,10 @@ __decorate([
 class RoomBattleState extends schema_1.Schema {
     constructor() {
         super(...arguments);
-        this.currentTurn = 1;
-        this.expectedUsers = "4";
         this.clients = new schema_1.MapSchema();
-        this.turnos = new schema_1.ArraySchema();
     }
 }
 exports.RoomBattleState = RoomBattleState;
 __decorate([
-    (0, schema_1.type)("number")
-], RoomBattleState.prototype, "currentTurn", void 0);
-__decorate([
-    (0, schema_1.type)("string")
-], RoomBattleState.prototype, "expectedUsers", void 0);
-__decorate([
     (0, schema_1.type)({ map: Player })
 ], RoomBattleState.prototype, "clients", void 0);
-__decorate([
-    (0, schema_1.type)(["string"])
-], RoomBattleState.prototype, "turnos", void 0);

@@ -6,14 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tools_1 = __importDefault(require("@colyseus/tools"));
 const monitor_1 = require("@colyseus/monitor");
 const playground_1 = require("@colyseus/playground");
-const colyseus_1 = require("colyseus");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const RoomBattle_1 = require("./rooms/RoomBattle");
 exports.default = (0, tools_1.default)({
     options: {
-        presence: new colyseus_1.RedisPresence(),
-        driver: new colyseus_1.RedisDriver(),
-        publicAddress: process.env.DOMAIN + "/server-" + process.env.NODE_APP_INSTANCE
+        //presence: new RedisPresence(),
+        //driver: new RedisDriver(),
+        publicAddress: process.env.DOMAIN //+ "/server-" + process.env.NODE_APP_INSTANCE
     },
     initializeGameServer: (gameServer) => {
         gameServer.define('room_battle', RoomBattle_1.room_battle);

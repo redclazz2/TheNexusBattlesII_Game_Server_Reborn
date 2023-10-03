@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tools_1 = require("@colyseus/tools");
 // Import Colyseus config
 const app_config_1 = __importDefault(require("./app.config"));
-const PORT = Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE);
+const PORT = Number(process.env.PORT);
 (0, tools_1.listen)(app_config_1.default, PORT);
 console.log("Listen on: ", PORT);

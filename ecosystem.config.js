@@ -15,8 +15,7 @@ module.exports = {
         exec_mode   : 'fork',         // IMPORTANT: do not use cluster mode.
         env: {
             DEBUG: "colyseus:errors",
-            NODE_ENV: "production",
-            DOMAIN: "game.thenexusbattles2.cloud"
+            NODE_ENV: "development"
         }
     }]
 }
