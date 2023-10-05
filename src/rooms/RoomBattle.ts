@@ -1,6 +1,10 @@
 import { Room, Client } from "@colyseus/core";
 import { RoomBattleState, Player } from "./schema/RoomBattleState";
 
+enum ColyseusMessagesTypes{
+  RoomHasReachedPlayerMax = 0,
+}
+
 export class room_battle extends Room<RoomBattleState> {
   currentMatchReadyNotices:number = 0;
 
@@ -13,17 +17,12 @@ export class room_battle extends Room<RoomBattleState> {
       equipos: options.equipos,
       maximo: options.numero_jugadores
     })
-    
+    this.maxClients = options.numero_jugadores;
     this.state.clients;
 
-    //Card Initial Sync
-    this.onMessage(0, (client, message) => {
-        this.broadcast(0, message, { except: client });
-    });
-
-    //Skip Turn
-    this.onMessage(1,()=>{
-      this.handleTurnTermination();
+    //Private Message Update!
+    this.onMessage(1,(client,message)=>{
+      this.broadcast(1, message, { except: client });
     });
 
     //A client is ready to begin
@@ -38,6 +37,10 @@ export class room_battle extends Room<RoomBattleState> {
     _player.sessionID = client.sessionId;
     _player.username = "Player";
     this.state.clients.set(_player.sessionID,_player);
+    
+    if(this.state.clients.size == this.maxClients){
+      this.broadcast(ColyseusMessagesTypes.RoomHasReachedPlayerMax);
+    }
   }
   
   onLeave (client: Client, consented: boolean) {
@@ -49,7 +52,5 @@ export class room_battle extends Room<RoomBattleState> {
     console.log("room", this.roomId, "disposing...");
   }
 
-  handleTurnTermination = ():void =>{
-
-  }
+  handleTurnTermination = ():void =>{}
 }

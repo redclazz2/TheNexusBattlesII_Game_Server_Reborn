@@ -3,12 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.room_battle = void 0;
 const core_1 = require("@colyseus/core");
 const RoomBattleState_1 = require("./schema/RoomBattleState");
+var ColyseusMessagesTypes;
+(function (ColyseusMessagesTypes) {
+    ColyseusMessagesTypes[ColyseusMessagesTypes["RoomHasReachedPlayerMax"] = 0] = "RoomHasReachedPlayerMax";
+})(ColyseusMessagesTypes || (ColyseusMessagesTypes = {}));
 class room_battle extends core_1.Room {
     constructor() {
         super(...arguments);
         this.currentMatchReadyNotices = 0;
-        this.handleTurnTermination = () => {
-        };
+        this.handleTurnTermination = () => { };
     }
     onCreate(options) {
         this.setState(new RoomBattleState_1.RoomBattleState());
@@ -18,14 +21,11 @@ class room_battle extends core_1.Room {
             equipos: options.equipos,
             maximo: options.numero_jugadores
         });
+        this.maxClients = options.numero_jugadores;
         this.state.clients;
-        //Card Initial Sync
-        this.onMessage(0, (client, message) => {
-            this.broadcast(0, message, { except: client });
-        });
-        //Skip Turn
-        this.onMessage(1, () => {
-            this.handleTurnTermination();
+        //Private Message Update!
+        this.onMessage(1, (client, message) => {
+            this.broadcast(1, message, { except: client });
         });
         //A client is ready to begin
         this.onMessage(2, () => {
@@ -38,6 +38,9 @@ class room_battle extends core_1.Room {
         _player.sessionID = client.sessionId;
         _player.username = "Player";
         this.state.clients.set(_player.sessionID, _player);
+        if (this.state.clients.size == this.maxClients) {
+            this.broadcast(ColyseusMessagesTypes.RoomHasReachedPlayerMax);
+        }
     }
     onLeave(client, consented) {
         console.log(client.sessionId, "left!");

@@ -3,8 +3,10 @@ import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 import { RedisDriver,RedisPresence} from "colyseus";
 import basicAuth from "express-basic-auth";
+import { RelayRoom } from "colyseus";
 
 import { room_battle } from "./rooms/RoomBattle";
+import { room_global } from "./rooms/RoomGlobal";
 
 export default config({
     options:{
@@ -15,6 +17,7 @@ export default config({
 
     initializeGameServer: (gameServer) => {
         gameServer.define('room_battle', room_battle);
+        gameServer.define('global_room',room_global);
     },
 
     initializeExpress: (app) => {
