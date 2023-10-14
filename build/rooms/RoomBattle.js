@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.room_battle = void 0;
 const core_1 = require("@colyseus/core");
 const RoomBattleState_1 = require("./schema/RoomBattleState");
+const scl_1 = require("scl");
 var ColyseusMessagesTypes;
 (function (ColyseusMessagesTypes) {
     ColyseusMessagesTypes[ColyseusMessagesTypes["RoomHasReachedPlayerMax"] = 0] = "RoomHasReachedPlayerMax";
@@ -10,7 +11,10 @@ var ColyseusMessagesTypes;
 class room_battle extends core_1.Room {
     constructor() {
         super(...arguments);
-        this.currentMatchReadyNotices = 0;
+        this.clientOrder = new scl_1.PriorityQueue({
+            capacity: 5,
+            compare: (a, b) => a.length * Math.ceil(Math.random() * (10 - 1) + 1) < b.length * Math.ceil(Math.random() * (10 - 1) + 1)
+        });
         this.handleTurnTermination = () => { };
     }
     onCreate(options) {
@@ -28,8 +32,13 @@ class room_battle extends core_1.Room {
             this.broadcast(1, message, { except: client });
         });
         //A client is ready to begin
-        this.onMessage(2, () => {
-            this.currentMatchReadyNotices++;
+        this.onMessage(2, (client) => {
+            this.clientOrder.add(client.sessionId);
+            if (this.clientOrder.size == this.maxClients) {
+                for (let i = this.clientOrder.size; i > 0; i--) {
+                    this.clients.getById(this.clientOrder.pop()).send(3, { turn: i });
+                }
+            }
         });
     }
     onJoin(client, options) {

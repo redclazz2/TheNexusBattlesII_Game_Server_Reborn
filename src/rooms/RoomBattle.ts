@@ -1,13 +1,17 @@
 import { Room, Client } from "@colyseus/core";
 import { RoomBattleState, Player } from "./schema/RoomBattleState";
+import { PriorityQueue } from "scl"
 
 enum ColyseusMessagesTypes{
   RoomHasReachedPlayerMax = 0,
 }
 
 export class room_battle extends Room<RoomBattleState> {
-  currentMatchReadyNotices:number = 0;
-
+  clientOrder:PriorityQueue<string> = new PriorityQueue<string>({
+    capacity: 5,
+    compare: (a,b) => a.length * Math.ceil(Math.random() * (10 - 1) + 1) <  b.length * Math.ceil(Math.random() * (10 - 1) + 1)
+  });
+  
   onCreate (options: any) {
     this.setState(new RoomBattleState());
     
@@ -26,8 +30,14 @@ export class room_battle extends Room<RoomBattleState> {
     });
 
     //A client is ready to begin
-    this.onMessage(2,()=>{
-      this.currentMatchReadyNotices ++;
+    this.onMessage(2,(client)=>{
+      this.clientOrder.add(client.sessionId);
+
+      if(this.clientOrder.size == this.maxClients){
+        for(let i = this.clientOrder.size; i > 0; i --){
+          this.clients.getById(this.clientOrder.pop()).send(3,{turn:i});
+        }
+      }
     })
   }
 
