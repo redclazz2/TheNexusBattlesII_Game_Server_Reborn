@@ -40,6 +40,9 @@ class room_battle extends core_1.Room {
                 }
             }
         });
+        this.onMessage(4, () => {
+            this.broadcast(4);
+        });
     }
     onJoin(client, options) {
         console.log(client.sessionId, "joined!");

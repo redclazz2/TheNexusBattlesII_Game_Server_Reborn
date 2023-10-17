@@ -39,6 +39,10 @@ export class room_battle extends Room<RoomBattleState> {
         }
       }
     })
+
+    this.onMessage(4,()=>{
+      this.broadcast(4);
+    });
   }
 
   onJoin (client: Client, options: any) {
