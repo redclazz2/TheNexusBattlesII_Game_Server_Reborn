@@ -17,6 +17,9 @@ __decorate([
 __decorate([
     (0, schema_1.type)("string")
 ], Player.prototype, "sessionID", void 0);
+__decorate([
+    (0, schema_1.type)("number")
+], Player.prototype, "team", void 0);
 class RoomBattleState extends schema_1.Schema {
     constructor() {
         super(...arguments);

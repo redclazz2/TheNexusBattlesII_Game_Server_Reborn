@@ -26,6 +26,7 @@ class room_battle extends core_1.Room {
             maximo: options.numero_jugadores
         });
         this.maxClients = options.numero_jugadores;
+        this.equipos = options.equipos;
         this.state.clients;
         //Private Message Update!
         this.onMessage(1, (client, message) => {
@@ -43,12 +44,19 @@ class room_battle extends core_1.Room {
         this.onMessage(4, () => {
             this.broadcast(4);
         });
+        this.onMessage(5, (client, message) => {
+            this.broadcast(5, {
+                remoteID: client.sessionId,
+                cardID: message.cardID
+            }, { except: client });
+        });
     }
     onJoin(client, options) {
         console.log(client.sessionId, "joined!");
         let _player = new RoomBattleState_1.Player();
         _player.sessionID = client.sessionId;
-        _player.username = "Player";
+        _player.username = options.username;
+        _player.team = this.equipos ? (this.state.clients.size < 2 ? 1 : 2) : -1;
         this.state.clients.set(_player.sessionID, _player);
         if (this.state.clients.size == this.maxClients) {
             this.broadcast(ColyseusMessagesTypes.RoomHasReachedPlayerMax);
