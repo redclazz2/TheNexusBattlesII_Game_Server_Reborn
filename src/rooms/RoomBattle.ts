@@ -52,6 +52,10 @@ export class room_battle extends Room<RoomBattleState> {
         cardID:message.cardID
       },{except:client});
     });
+
+    this.onMessage(6,(message)=>{
+      this.broadcast(6,message);
+    });
   }
 
   onJoin (client: Client, options: any) {
@@ -59,7 +63,7 @@ export class room_battle extends Room<RoomBattleState> {
     let _player = new Player();
     _player.sessionID = client.sessionId;
     _player.username = options.username;
-    _player.team = this.equipos ?  (this.state.clients.size < 2 ? 1 : 2 ): -1;
+    _player.team = this.equipos == true ?  (this.state.clients.size < 2 ? 1 : 2 ): -1;
 
     this.state.clients.set(_player.sessionID,_player);
     
