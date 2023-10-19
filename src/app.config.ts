@@ -10,9 +10,9 @@ import { room_global } from "./rooms/RoomGlobal";
 
 export default config({
     options:{
-        //presence: new RedisPresence(),
-        //driver: new RedisDriver(),
-        publicAddress: process.env.DOMAIN //+ "/server-" + process.env.NODE_APP_INSTANCE
+        presence: new RedisPresence(),
+        driver: new RedisDriver(),
+        publicAddress: process.env.DOMAIN + "/server-" + process.env.NODE_APP_INSTANCE
     },
 
     initializeGameServer: (gameServer) => {
