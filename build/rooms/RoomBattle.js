@@ -51,7 +51,14 @@ class room_battle extends core_1.Room {
             }, { except: client });
         });
         this.onMessage(6, (message) => {
+            console.log(message);
             this.broadcast(6, message);
+        });
+        this.onMessage(7, (client, message) => {
+            this.broadcast(7, message, { except: client });
+        });
+        this.onMessage(8, (_, message) => {
+            this.broadcast(8, message);
         });
     }
     onJoin(client, options) {
